@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd"
+>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- datasource bean -->
+    <bean class = "org.springframework.jdbc.datasource.DriverManagerDataSource" name = "dataSource">
+        <property name="driverClassName" value = "com.mysql.jdbc.Driver"/>
+        <property name="url" value = "jdbc:mysql://localhost:3306/demo"/>
+        <property name="username" value = "root"/>
+        <property name="password" value = "roryeiffedatabase9("/>
+    </bean>
+
+    <!-- session factory bean -->
+    <bean class = "org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+          name="sessionFactory">
+        <!-- data source -->
+        <property name="dataSource" ref = "dataSource"/>
+        <!-- hibernate properties -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key = "hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
+                <prop key = "hibernate.show_sql">true</prop>
+                <prop key = "hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <!-- annotated classes -->
+        <property name = "annotatedClasses">
+            <list>
+                <value>
+                    com.revature.entities.Employee
+                </value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- hibernate bean -->
+    <bean
+            class = "org.springframework.orm.hibernate5.HibernateTemplate"
+            name = "hibernateTemplate">
+        <property name="sessionFactory" ref = "sessionFactory"/>
+    </bean>
+
+    <!-- employee dao bean -->
+    <bean class = "com.revature.dao.EmployeeDao" name = "employeeDao">
+        <property name="hibernateTemplate" ref = "hibernateTemplate"/>
+    </bean>
+
+    <!-- transaction bean -->
+    <bean class = "org.springframework.orm.hibernate5.HibernateTransactionManager" name = "transactionManager">
+        <property name="sessionFactory" ref = "sessionFactory"/>
+    </bean>
+
+
+</beans>
